@@ -1,0 +1,15 @@
+# SoulwardenKioku never commits captures. They are personal data -- they live on the
+# machine that made them and are shared only as a sanitized .zip via Discord.
+*.pcap
+*.pcapng
+*.pcapng.gz
+SoulwardenKioku Captures/
+**/pcap/
+*_soulwardenkioku.zip
+Game.log
+dumpcap.log
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
