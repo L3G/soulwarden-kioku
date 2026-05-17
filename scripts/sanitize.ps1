@@ -45,7 +45,8 @@ $sessionName = Split-Path $SessionDir -Leaf
 
 $wsDir = Find-WiresharkDir
 if (-not $wsDir) {
-    Write-Err2 "Wireshark / tshark not found. Run Setup.cmd first."
+    Write-Err2 "Wireshark / tshark not found. Run SoulwardenKioku.cmd first --"
+    Write-Err2 "it installs the capture engine."
     return
 }
 $Tshark   = Join-Path $wsDir 'tshark.exe'

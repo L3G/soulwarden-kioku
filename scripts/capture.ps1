@@ -71,19 +71,27 @@ param(
 . "$PSScriptRoot\lib.ps1"
 
 # --------------------------------------------------------------------------
-#  Preflight -- capture engine present?
+#  Preflight -- make sure the capture engine is installed. The first time
+#  SoulwardenKioku runs (or if Wireshark / Npcap was removed) this installs
+#  it automatically: setup.ps1 self-elevates, installs, and we wait for it.
 # --------------------------------------------------------------------------
+if (-not (Find-WiresharkDir) -or -not (Test-NpcapInstalled)) {
+    Write-Banner 'First-time setup'
+    Write-Host "  SoulwardenKioku needs its capture engine (Npcap + Wireshark)."
+    Write-Host "  This installs once. Windows will ask for permission -- click Yes."
+    Write-Host ""
+    & "$PSScriptRoot\setup.ps1"
+    if (-not (Find-WiresharkDir) -or -not (Test-NpcapInstalled)) {
+        Write-Err2 "The capture engine is still missing -- setup did not finish."
+        Write-Err2 "See the messages above. You can also install Wireshark and Npcap"
+        Write-Err2 "by hand from wireshark.org and npcap.com, then run this again."
+        Read-Host "Press Enter to close"
+        return
+    }
+    Write-Ok "Capture engine ready."
+    Write-Host ""
+}
 $wsDir = Find-WiresharkDir
-if (-not $wsDir) {
-    Write-Err2 "Wireshark / dumpcap was not found."
-    Write-Err2 "Run Setup.cmd once first (it installs the capture engine)."
-    return
-}
-if (-not (Test-NpcapInstalled)) {
-    Write-Err2 "The Npcap capture driver is not installed."
-    Write-Err2 "Run Setup.cmd once first."
-    return
-}
 
 $Dumpcap   = Join-Path $wsDir 'dumpcap.exe'
 $Wireshark = Join-Path $wsDir 'Wireshark.exe'

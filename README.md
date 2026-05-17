@@ -64,15 +64,15 @@ You need **Windows 10/11** and **New World installed via Steam**.
 [**Download the latest release**](../../releases/latest) and unzip it anywhere
 (Desktop is fine). Or clone this repo.
 
-### 2. Run setup — once
+### 2. Capture a session
 
-Double-click **`Setup.cmd`**. It installs the capture engine (Npcap +
-Wireshark) and will ask for Administrator rights to do so. This is a one-time
-step.
+Double-click **`SoulwardenKioku.cmd`**.
 
-### 3. Capture a session
+**The first time only**, it installs its capture engine (Npcap + Wireshark) —
+Windows asks for permission once; click **Yes**. Every run after that goes
+straight to capturing.
 
-Double-click **`SoulwardenKioku.cmd`**. It asks for a short **label**, then:
+It then asks for a short **label** and:
 
 1. starts the capture,
 2. launches New World through Steam — play normally,
@@ -83,7 +83,7 @@ Double-click **`SoulwardenKioku.cmd`**. It asks for a short **label**, then:
 
 SoulwardenKioku then builds **`<session>_soulwardenkioku.zip`** — your shareable bundle.
 
-### 4. Share it
+### 3. Share it
 
 Skim the files inside the bundle (a quick sanity check), then drop the `.zip`
 in the community Discord. See **[CONTRIBUTING.md](CONTRIBUTING.md)**.
@@ -136,13 +136,15 @@ Sessions are filed under **`Documents\SoulwardenKioku Captures\`** by default.
 ## How it works
 
 ```
-Setup.cmd  ─▶ scripts/setup.ps1     installs Npcap + Wireshark
-SoulwardenKioku.cmd  ─▶ scripts/capture.ps1   capture + launch game + event markers
-                   └─▶ scripts/sanitize.ps1   builds the shareable bundle
+SoulwardenKioku.cmd ─▶ scripts/capture.ps1
+                         ├─ first run only: scripts/setup.ps1  (installs Npcap + Wireshark)
+                         ├─ capture + launch the game + event markers
+                         └─ scripts/sanitize.ps1  (builds the shareable bundle)
 ```
 
-The capture engine is **dumpcap** (from Wireshark) with **Npcap**. SoulwardenKioku does
-not bundle them — `Setup.cmd` installs them from their official sources.
+The capture engine is **dumpcap** (from Wireshark) with **Npcap**. SoulwardenKioku
+does not bundle them — it installs them on first run from their official
+sources.
 
 ---
 

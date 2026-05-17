@@ -22,8 +22,8 @@ be the missing piece. Thank you for helping.
    *"char creation, EU Central, build 6031"* or *"~40 min in-world, combat +
    2 zone changes, one disconnect"*.
 
-That is it. No GitHub account, no pull request, nothing to install beyond the
-one-time `Setup.cmd`.
+That is it. No GitHub account, no pull request — and nothing to install by
+hand: SoulwardenKioku sets up its own capture engine the first time you run it.
 
 ## What makes a capture especially valuable
 
@@ -46,7 +46,7 @@ posting, or leave that file out.
 Code contributions are welcome via pull request:
 
 - Keep it **dependency-light** — Windows PowerShell, plus the Wireshark tools
-  `Setup.cmd` installs. No new runtimes.
+  SoulwardenKioku installs on first run. No new runtimes.
 - The capture path must stay **passive** — capture only, normal game launch,
   no injection, no game modification. Anything that touches the game process
   is out of scope and will not be merged.
@@ -56,7 +56,7 @@ Code contributions are welcome via pull request:
 ## Reporting problems
 
 - **A bug or a capture failure** — open an issue with your Windows version and
-  what `Setup.cmd` / `SoulwardenKioku.cmd` printed.
+  what `SoulwardenKioku.cmd` printed.
 - **A privacy gap** (an identifier the scrubber missed) — open an issue
   describing the *kind* of value and where it appeared. **Do not attach the
   unredacted data.**

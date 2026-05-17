@@ -8,9 +8,9 @@
       * Npcap     -- the packet-capture driver
       * Wireshark -- provides the dumpcap / tshark / mergecap engines
 
-    Run this ONCE before your first capture. Safe to re-run -- it skips
-    anything already installed. The easiest way to launch it is to
-    double-click Setup.cmd in the folder above.
+    SoulwardenKioku.cmd runs this automatically the first time it cannot
+    find the capture engine. Safe to re-run -- it skips anything already
+    installed.
 
 .NOTES
     Self-elevates to Administrator (Npcap installs a kernel driver).
@@ -23,11 +23,21 @@ param(
 )
 
 # --- self-elevate -----------------------------------------------------------
+#  Installing the Npcap driver needs Administrator rights. Without them,
+#  relaunch elevated and WAIT, so the caller (SoulwardenKioku.cmd) can
+#  re-check and carry on once the install has finished.
 $principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
-    Write-Host "Re-launching with Administrator rights ..." -ForegroundColor Yellow
-    Start-Process powershell -Verb RunAs `
-        -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    Write-Host "  Installing the capture engine needs Administrator rights." -ForegroundColor Yellow
+    Write-Host "  Windows will now ask for permission -- please click Yes." -ForegroundColor Yellow
+    try {
+        Start-Process powershell -Verb RunAs -Wait `
+            -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    } catch {
+        Write-Host "  Permission was declined -- the capture engine was not installed." -ForegroundColor Red
+        Write-Host "  Re-run SoulwardenKioku and click Yes, or install Wireshark and" -ForegroundColor Red
+        Write-Host "  Npcap by hand from wireshark.org and npcap.com." -ForegroundColor Red
+    }
     return
 }
 
@@ -50,6 +60,7 @@ if (Test-NpcapInstalled) {
     } catch {
         Write-Err2 "Could not download Npcap automatically."
         Write-Err2 "Install it by hand from https://npcap.com/#download , then re-run setup."
+        Read-Host "  Press Enter to close this window"
         return
     }
     Write-Step "Installing Npcap (silent; non-admin capture enabled) ..."
@@ -59,6 +70,7 @@ if (Test-NpcapInstalled) {
             -Wait -PassThru
     if ($p.ExitCode -ne 0) {
         Write-Err2 "Npcap installer exited with code $($p.ExitCode). Install it by hand."
+        Read-Host "  Press Enter to close this window"
         return
     }
     Write-Ok "Npcap installed."
@@ -79,6 +91,7 @@ if ($wsDir) {
     if (-not $wsDir) {
         Write-Err2 "Wireshark is not installed."
         Write-Err2 "Install it from https://www.wireshark.org/download.html and re-run setup."
+        Read-Host "  Press Enter to close this window"
         return
     }
     Write-Ok "Wireshark installed ($wsDir)."
@@ -102,5 +115,8 @@ Write-Host "  Network interfaces the capture engine can see:" -ForegroundColor C
 & $dumpcap -D
 
 Write-Banner 'Setup complete'
-Write-Host "  You're ready. To capture a session, double-click  SoulwardenKioku.cmd" -ForegroundColor Green
+Write-Host "  The capture engine is installed -- SoulwardenKioku will continue." -ForegroundColor Green
 Write-Host ""
+# This elevated window is separate from the launcher; pause so the result is
+# readable, then close it -- the launcher carries on where it left off.
+Read-Host "  Press Enter to close this setup window"
